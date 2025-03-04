@@ -4,7 +4,7 @@ import { Message } from '@/types';
 import { cn } from '@/lib/utils';
 import CodeBlock from './CodeBlock';
 import { extractCodeFromResponse } from '@/utils/apiService';
-import { Bot, User } from 'lucide-react';
+import { Bot, User, Code } from 'lucide-react';
 
 interface ChatMessageProps {
   message: Message;
@@ -38,7 +38,15 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLast = false }) =>
 
     if (message.isCode) {
       const { code, language } = extractCodeFromResponse(message.content);
-      return <CodeBlock code={code} language={language} />;
+      return (
+        <div>
+          <div className="flex items-center gap-2 mb-2 text-blue-600">
+            <Code size={16} />
+            <span className="text-sm font-medium">Code Sample</span>
+          </div>
+          <CodeBlock code={code} language={language} />
+        </div>
+      );
     }
 
     // Check for code blocks within the message
@@ -62,7 +70,13 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLast = false }) =>
         const language = match[1] || 'javascript';
         const code = match[2];
         parts.push(
-          <CodeBlock key={`code-${match.index}`} code={code} language={language} />
+          <div key={`code-${match.index}`} className="mb-4">
+            <div className="flex items-center gap-2 mb-2 text-blue-600">
+              <Code size={16} />
+              <span className="text-sm font-medium">{language.charAt(0).toUpperCase() + language.slice(1)}</span>
+            </div>
+            <CodeBlock key={`code-${match.index}`} code={code} language={language} />
+          </div>
         );
 
         lastIndex = match.index + match[0].length;
@@ -86,29 +100,29 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLast = false }) =>
   return (
     <div 
       className={cn(
-        "flex w-full mb-4 gap-4 message-appear",
+        "flex w-full mb-5 gap-4 message-appear max-w-4xl mx-auto",
         isUser ? "justify-end" : "justify-start"
       )}
     >
       {!isUser && (
-        <div className="h-10 w-10 rounded-full flex items-center justify-center bg-blue-100 text-blue-600 flex-shrink-0">
+        <div className="h-10 w-10 rounded-xl flex items-center justify-center bg-blue-100 text-blue-600 flex-shrink-0 shadow-sm">
           <Bot size={20} />
         </div>
       )}
       
       <div 
         className={cn(
-          "max-w-[85%] sm:max-w-[75%] rounded-2xl px-4 py-3",
+          "max-w-[85%] sm:max-w-[75%] rounded-2xl px-5 py-4",
           isUser 
-            ? "bg-blue-600 text-white" 
-            : "bg-slate-100 text-slate-800",
+            ? "bg-blue-600 text-white shadow-md" 
+            : "bg-white border border-slate-200 text-slate-800 shadow-sm",
           isLast && "animate-in"
         )}
       >
         {renderContent()}
         <div 
           className={cn(
-            "text-xs mt-1 text-right",
+            "text-xs mt-2 text-right",
             isUser ? "text-blue-200" : "text-slate-500"
           )}
         >
@@ -117,7 +131,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLast = false }) =>
       </div>
 
       {isUser && (
-        <div className="h-10 w-10 rounded-full flex items-center justify-center bg-slate-200 text-slate-600 flex-shrink-0">
+        <div className="h-10 w-10 rounded-xl flex items-center justify-center bg-slate-200 text-slate-600 flex-shrink-0 shadow-sm">
           <User size={20} />
         </div>
       )}

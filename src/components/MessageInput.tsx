@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowUp, Loader2 } from 'lucide-react';
+import { ArrowUp, Loader2, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 interface MessageInputProps {
@@ -42,8 +42,8 @@ const MessageInput: React.FC<MessageInputProps> = ({
   }, [message]);
 
   return (
-    <form onSubmit={handleSubmit} className="relative w-full">
-      <div className="relative flex items-center surface-glass rounded-full pr-1">
+    <form onSubmit={handleSubmit} className="relative w-full max-w-4xl mx-auto">
+      <div className="relative flex items-center bg-white rounded-2xl pr-2 shadow-sm border border-slate-200 hover:border-slate-300 transition-colors">
         <textarea
           ref={textareaRef}
           value={message}
@@ -52,9 +52,9 @@ const MessageInput: React.FC<MessageInputProps> = ({
           placeholder={placeholder}
           disabled={isProcessing}
           className={cn(
-            "w-full py-3 px-4 pr-12 max-h-[200px] bg-transparent resize-none",
+            "w-full py-3 px-4 pr-14 max-h-[200px] bg-transparent resize-none",
             "focus:outline-none focus:ring-0 placeholder:text-slate-400",
-            "rounded-full text-slate-800",
+            "rounded-2xl text-slate-800",
             isProcessing && "opacity-70"
           )}
           rows={1}
@@ -63,7 +63,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
           type="submit"
           disabled={!message.trim() || isProcessing}
           className={cn(
-            "absolute right-1 bg-blue-600 h-10 w-10 rounded-full flex items-center justify-center transition-all",
+            "absolute right-2 bg-blue-600 h-10 w-10 rounded-xl flex items-center justify-center transition-all",
             "text-white hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed",
           )}
         >
@@ -74,7 +74,11 @@ const MessageInput: React.FC<MessageInputProps> = ({
           )}
         </button>
       </div>
-      <div className="h-6"></div>
+      <div className="flex justify-center mt-2">
+        <div className="text-xs text-slate-500 flex items-center gap-1">
+          <Sparkles size={12} /> Powered by Google Gemini
+        </div>
+      </div>
     </form>
   );
 };

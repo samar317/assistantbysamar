@@ -9,7 +9,8 @@ import MessageInput from './MessageInput';
 import Sidebar from './Sidebar';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { Menu, X } from 'lucide-react';
+import { BackgroundDecoration, ImageDecoration } from './DecorativeElements';
+import { Menu, X, MessageSquareDashed, Bot, Sparkles } from 'lucide-react';
 
 const ChatInterface: React.FC = () => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
@@ -168,11 +169,13 @@ const ChatInterface: React.FC = () => {
   };
 
   return (
-    <div className="h-full flex">
+    <div className="h-screen flex">
+      <BackgroundDecoration />
+      
       {/* Sidebar */}
       <div 
         className={cn(
-          "fixed md:static inset-0 z-20 w-full max-w-[280px] md:block transition-transform duration-300 bg-white shadow-md md:shadow-none",
+          "fixed md:relative inset-0 z-30 w-full max-w-[280px] md:block transition-all duration-300 bg-white/90 backdrop-blur-md shadow-lg md:shadow-none border-r border-slate-200/70",
           isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"
         )}
       >
@@ -187,7 +190,7 @@ const ChatInterface: React.FC = () => {
         {isMobile && (
           <button 
             onClick={() => setIsSidebarOpen(false)}
-            className="absolute top-4 right-4 p-2 rounded-full bg-slate-100 text-slate-600"
+            className="absolute top-4 right-4 p-2 rounded-full bg-white/80 text-slate-600 hover:bg-white hover:text-slate-800 transition-colors"
           >
             <X size={20} />
           </button>
@@ -195,9 +198,9 @@ const ChatInterface: React.FC = () => {
       </div>
       
       {/* Chat Area */}
-      <div className="flex-1 flex flex-col h-full">
+      <div className="flex-1 flex flex-col h-full relative overflow-hidden">
         {/* Header */}
-        <header className="h-14 flex items-center px-4 border-b border-slate-200 bg-white">
+        <header className="h-16 flex items-center px-4 md:px-6 border-b border-slate-200/70 bg-white/70 backdrop-blur-md z-10">
           {isMobile && (
             <button
               onClick={() => setIsSidebarOpen(true)}
@@ -206,11 +209,14 @@ const ChatInterface: React.FC = () => {
               <Menu size={20} />
             </button>
           )}
-          <h1 className="text-lg font-medium">{currentConversation?.title || 'New Conversation'}</h1>
+          <h1 className="text-lg font-medium flex items-center gap-2">
+            <span className="hidden sm:inline">{currentConversation?.title || 'New Conversation'}</span>
+            <span className="inline sm:hidden">Chat</span>
+          </h1>
         </header>
         
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 bg-slate-50">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 bg-transparent">
           {currentConversation?.messages.length ? (
             currentConversation.messages.map((message, index) => (
               <ChatMessage 
@@ -221,22 +227,41 @@ const ChatInterface: React.FC = () => {
             ))
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-center p-4">
-              <div className="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center mb-6">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M21 15C21 15.5304 20.7893 16.0391 20.4142 16.4142C20.0391 16.7893 19.5304 17 19 17H7L3 21V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V15Z" stroke="#3B82F6" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
+              <div className="max-w-2xl mx-auto grid md:grid-cols-5 gap-8 items-center">
+                <div className="col-span-3 space-y-6 text-center md:text-left order-2 md:order-1">
+                  <div className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-blue-600 mb-4">
+                    <Sparkles size={28} />
+                  </div>
+                  <h2 className="text-3xl font-bold text-slate-800">Your Personal AI Assistant</h2>
+                  <p className="text-slate-500 text-lg">
+                    Ask me questions, request code examples, or get help with your web development projects.
+                  </p>
+                  <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                    <SuggestionPill 
+                      text="Explain React hooks"
+                      onClick={() => sendMessage("Explain React hooks and when to use them")} 
+                    />
+                    <SuggestionPill 
+                      text="Create a countdown timer"
+                      onClick={() => sendMessage("Write a countdown timer component in React")} 
+                    />
+                    <SuggestionPill 
+                      text="Generate a color palette"
+                      onClick={() => sendMessage("Suggest a modern color palette for a professional website")} 
+                    />
+                  </div>
+                </div>
+                <div className="hidden md:block md:col-span-2 order-1 md:order-2">
+                  <ImageDecoration className="w-full aspect-square md:aspect-video" />
+                </div>
               </div>
-              <h2 className="text-2xl font-medium text-slate-800 mb-2">Welcome to your Personal Assistant</h2>
-              <p className="text-slate-500 max-w-md">
-                Ask me questions, request code examples, or get help with your web development projects.
-              </p>
             </div>
           )}
           <div ref={messagesEndRef} />
         </div>
         
         {/* Input */}
-        <div className="p-4 border-t border-slate-200 bg-white">
+        <div className="p-4 md:p-6 border-t border-slate-200/70 bg-white/70 backdrop-blur-md">
           <MessageInput 
             onSendMessage={sendMessage} 
             isProcessing={isProcessing}
@@ -244,6 +269,17 @@ const ChatInterface: React.FC = () => {
         </div>
       </div>
     </div>
+  );
+};
+
+const SuggestionPill = ({ text, onClick }: { text: string, onClick: () => void }) => {
+  return (
+    <button 
+      onClick={onClick}
+      className="bg-white border border-slate-200 hover:border-slate-300 text-slate-700 px-4 py-2 rounded-full text-sm shadow-sm hover:shadow transition-all"
+    >
+      {text}
+    </button>
   );
 };
 
