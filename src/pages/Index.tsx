@@ -1,15 +1,9 @@
 
 import React from 'react';
-import ChatInterface from '@/components/ChatInterface';
+import { Navigate } from 'react-router-dom';
 
 const Index = () => {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
-      <div className="h-full flex flex-col">
-        <ChatInterface />
-      </div>
-    </div>
-  );
+  return <Navigate to="/" replace />;
 };
 
 export default Index;
