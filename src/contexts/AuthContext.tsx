@@ -57,10 +57,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signInWithPhone = async (phone: string) => {
     try {
+      // Check if phone authentication is enabled first to provide a better error message
       const { error } = await supabase.auth.signInWithOtp({
         phone,
       });
-      if (error) throw error;
+      
+      if (error) {
+        if (error.message.includes('phone_provider_disabled') || error.message.includes('Unsupported phone provider')) {
+          throw new Error('Phone authentication is not enabled. Please enable it in your Supabase project settings.');
+        }
+        throw error;
+      }
       
       toast({
         title: "Verification code sent",

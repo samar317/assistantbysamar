@@ -1,15 +1,17 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { BackgroundDecoration } from '@/components/DecorativeElements';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, Mail, Phone, User, Lock, LogIn, UserPlus, RotateCcw } from 'lucide-react';
+import { Loader2, Mail, Phone, User, Lock, LogIn, UserPlus, RotateCcw, Check, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { Watermark } from '@/components/Watermark';
+import { countryCodes, detectCountryCode, formatPhoneNumber } from '@/utils/phoneUtils';
 
 const Auth = () => {
   const { user, signIn, signUp, signInWithPhone, verifyOTP } = useAuth();
@@ -18,6 +20,8 @@ const Auth = () => {
   const [isPhoneSignIn, setIsPhoneSignIn] = useState(false);
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [countryCode, setCountryCode] = useState('+1');
+  const [showCountryDropdown, setShowCountryDropdown] = useState(false);
   const [otpCode, setOtpCode] = useState('');
   const [showOtpInput, setShowOtpInput] = useState(false);
   const [password, setPassword] = useState('');
@@ -46,6 +50,23 @@ const Auth = () => {
       transition: { duration: 0.3, ease: "easeOut" }
     }
   };
+
+  // Country selection dropdown animation
+  const dropdownVariants = {
+    hidden: { opacity: 0, height: 0, overflow: 'hidden' },
+    visible: { 
+      opacity: 1, 
+      height: 'auto',
+      transition: { duration: 0.3 }
+    }
+  };
+
+  useEffect(() => {
+    if (phone) {
+      const detectedCode = detectCountryCode(phone);
+      setCountryCode(detectedCode);
+    }
+  }, [phone]);
 
   // Redirect if already logged in
   if (user) {
@@ -76,10 +97,12 @@ const Auth = () => {
     setIsLoading(true);
 
     try {
+      const formattedPhone = formatPhoneNumber(phone, countryCode);
+      
       if (showOtpInput) {
-        await verifyOTP(phone, otpCode);
+        await verifyOTP(formattedPhone, otpCode);
       } else {
-        await signInWithPhone(phone);
+        await signInWithPhone(formattedPhone);
         setShowOtpInput(true);
       }
     } catch (err: any) {
@@ -104,9 +127,15 @@ const Auth = () => {
     setIsPhoneSignIn(!isPhoneSignIn);
   };
 
+  const handleCountrySelect = (code: string) => {
+    setCountryCode(code);
+    setShowCountryDropdown(false);
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 p-4 overflow-hidden">
       <BackgroundDecoration />
+      <Watermark />
       
       <motion.div 
         className="w-full max-w-md"
@@ -152,21 +181,57 @@ const Auth = () => {
               {!showOtpInput ? (
                 <motion.div className="space-y-2" variants={itemVariants}>
                   <Label htmlFor="phone">Phone Number</Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
-                    <Input
-                      id="phone"
-                      type="tel"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+1234567890"
-                      required
-                      className="pl-10"
-                      disabled={isLoading}
-                    />
+                  <div className="flex space-x-2">
+                    <div className="relative">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-28 flex justify-between items-center"
+                        onClick={() => setShowCountryDropdown(!showCountryDropdown)}
+                        disabled={isLoading}
+                      >
+                        {countryCode} <ChevronDown className="h-4 w-4 ml-1" />
+                      </Button>
+                      <AnimatePresence>
+                        {showCountryDropdown && (
+                          <motion.div
+                            className="absolute top-full left-0 mt-1 w-56 bg-white rounded-md shadow-lg z-10 border border-slate-200 max-h-60 overflow-y-auto"
+                            variants={dropdownVariants}
+                            initial="hidden"
+                            animate="visible"
+                            exit="hidden"
+                          >
+                            {countryCodes.map((country) => (
+                              <button
+                                key={country.code}
+                                type="button"
+                                className="w-full text-left px-4 py-2 hover:bg-slate-100 flex justify-between items-center"
+                                onClick={() => handleCountrySelect(country.code)}
+                              >
+                                <span>{country.name}</span>
+                                <span className="font-semibold">{country.code}</span>
+                              </button>
+                            ))}
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                    <div className="relative flex-1">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
+                      <Input
+                        id="phone"
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="Phone number"
+                        required
+                        className="pl-10"
+                        disabled={isLoading}
+                      />
+                    </div>
                   </div>
                   <p className="text-xs text-slate-500">
-                    Please enter your phone number with country code (e.g., +1 for US)
+                    We'll automatically detect your country code from the number format
                   </p>
                 </motion.div>
               ) : (
@@ -181,7 +246,7 @@ const Auth = () => {
                       onChange={(e) => setOtpCode(e.target.value)}
                       placeholder="Enter verification code"
                       required
-                      className="pl-10"
+                      className="pl-10 text-lg tracking-widest font-mono"
                       disabled={isLoading}
                     />
                   </div>
@@ -201,7 +266,17 @@ const Auth = () => {
                     </>
                   ) : (
                     <>
-                      {showOtpInput ? 'Verify Code' : 'Send Verification Code'}
+                      {showOtpInput ? (
+                        <>
+                          <Check className="mr-2 h-4 w-4" />
+                          Verify Code
+                        </>
+                      ) : (
+                        <>
+                          <Phone className="mr-2 h-4 w-4" />
+                          Send Verification Code
+                        </>
+                      )}
                     </>
                   )}
                 </Button>
@@ -321,7 +396,7 @@ const Auth = () => {
             <button
               type="button"
               onClick={toggleAuthMethod}
-              className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+              className="text-blue-600 hover:text-blue-800 text-sm font-medium transform transition-transform hover:scale-105"
               disabled={isLoading}
             >
               {isPhoneSignIn ? 'Sign in with Email' : 'Sign in with Phone'}
@@ -331,7 +406,7 @@ const Auth = () => {
               <button
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                className="text-blue-600 hover:text-blue-800 text-sm font-medium transform transition-transform hover:scale-105"
                 disabled={isLoading}
               >
                 {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
