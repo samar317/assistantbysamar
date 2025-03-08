@@ -6,24 +6,53 @@ import { BackgroundDecoration } from '@/components/DecorativeElements';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Mail, Phone, User, Lock, LogIn, UserPlus, RotateCcw } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { motion } from 'framer-motion';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const Auth = () => {
-  const { user, signIn, signUp } = useAuth();
+  const { user, signIn, signUp, signInWithPhone, verifyOTP } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [isSignUp, setIsSignUp] = useState(false);
+  const [isPhoneSignIn, setIsPhoneSignIn] = useState(false);
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [otpCode, setOtpCode] = useState('');
+  const [showOtpInput, setShowOtpInput] = useState(false);
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const isMobile = useIsMobile();
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { 
+        duration: 0.5,
+        when: "beforeChildren",
+        staggerChildren: 0.1
+      }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: { 
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.3, ease: "easeOut" }
+    }
+  };
 
   // Redirect if already logged in
   if (user) {
     return <Navigate to="/" replace />;
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
@@ -41,100 +70,276 @@ const Auth = () => {
     }
   };
 
+  const handlePhoneSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      if (showOtpInput) {
+        await verifyOTP(phone, otpCode);
+      } else {
+        await signInWithPhone(phone);
+        setShowOtpInput(true);
+      }
+    } catch (err: any) {
+      setError(err.message || 'An error occurred');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const resetForm = () => {
+    setShowOtpInput(false);
+    setOtpCode('');
+    setPhone('');
+    setEmail('');
+    setPassword('');
+    setUsername('');
+    setError(null);
+  };
+
+  const toggleAuthMethod = () => {
+    resetForm();
+    setIsPhoneSignIn(!isPhoneSignIn);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 p-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 p-4 overflow-hidden">
       <BackgroundDecoration />
       
-      <div className="w-full max-w-md">
-        <div className="bg-white p-8 rounded-2xl shadow-xl border border-slate-200/60">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-slate-800 mb-2">
-              {isSignUp ? 'Create Account' : 'Welcome Back'}
+      <motion.div 
+        className="w-full max-w-md"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+      >
+        <motion.div 
+          className="bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-slate-200/60"
+          variants={itemVariants}
+        >
+          <motion.div className="text-center mb-6 sm:mb-8" variants={itemVariants}>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-800 mb-2">
+              {isPhoneSignIn 
+                ? (showOtpInput ? 'Verify Your Phone' : 'Phone Sign In') 
+                : (isSignUp ? 'Create Account' : 'Welcome Back')}
             </h1>
-            <p className="text-slate-500">
-              {isSignUp ? 'Sign up to get started with our AI assistant' : 'Sign in to continue with your AI assistant'}
+            <p className="text-slate-500 text-sm sm:text-base">
+              {isPhoneSignIn 
+                ? (showOtpInput ? 'Enter the code sent to your phone' : 'Sign in with your phone number') 
+                : (isSignUp ? 'Sign up to get started with our AI assistant' : 'Sign in to continue with your AI assistant')}
             </p>
-          </div>
+          </motion.div>
 
           {error && (
-            <div className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
+            <motion.div 
+              className="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm"
+              variants={itemVariants}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
               {error}
-            </div>
+            </motion.div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {isSignUp && (
-              <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
-                <Input
-                  id="username"
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="johndoe"
-                  required
+          {isPhoneSignIn ? (
+            <motion.form 
+              onSubmit={handlePhoneSubmit} 
+              className="space-y-4"
+              variants={containerVariants}
+            >
+              {!showOtpInput ? (
+                <motion.div className="space-y-2" variants={itemVariants}>
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
+                    <Input
+                      id="phone"
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="+1234567890"
+                      required
+                      className="pl-10"
+                      disabled={isLoading}
+                    />
+                  </div>
+                  <p className="text-xs text-slate-500">
+                    Please enter your phone number with country code (e.g., +1 for US)
+                  </p>
+                </motion.div>
+              ) : (
+                <motion.div className="space-y-2" variants={itemVariants}>
+                  <Label htmlFor="otp">Verification Code</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
+                    <Input
+                      id="otp"
+                      type="text"
+                      value={otpCode}
+                      onChange={(e) => setOtpCode(e.target.value)}
+                      placeholder="Enter verification code"
+                      required
+                      className="pl-10"
+                      disabled={isLoading}
+                    />
+                  </div>
+                </motion.div>
+              )}
+              
+              <motion.div variants={itemVariants}>
+                <Button 
+                  type="submit" 
                   className="w-full"
                   disabled={isLoading}
-                />
-              </div>
-            )}
-            
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="name@example.com"
-                required
-                className="w-full"
-                disabled={isLoading}
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                className="w-full"
-                disabled={isLoading}
-              />
-            </div>
-            
-            <Button 
-              type="submit" 
-              className="w-full"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  {isSignUp ? 'Creating account...' : 'Signing in...'}
-                </>
-              ) : (
-                isSignUp ? 'Sign Up' : 'Sign In'
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {showOtpInput ? 'Verifying...' : 'Sending code...'}
+                    </>
+                  ) : (
+                    <>
+                      {showOtpInput ? 'Verify Code' : 'Send Verification Code'}
+                    </>
+                  )}
+                </Button>
+              </motion.div>
+
+              {showOtpInput && (
+                <motion.div 
+                  className="text-center"
+                  variants={itemVariants}
+                >
+                  <button
+                    type="button"
+                    onClick={() => setShowOtpInput(false)}
+                    className="text-blue-600 text-sm font-medium flex items-center justify-center mx-auto"
+                    disabled={isLoading}
+                  >
+                    <RotateCcw className="mr-1 h-3 w-3" />
+                    Try a different phone number
+                  </button>
+                </motion.div>
               )}
-            </Button>
-          </form>
+            </motion.form>
+          ) : (
+            <motion.form 
+              onSubmit={handleEmailSubmit} 
+              className="space-y-4"
+              variants={containerVariants}
+            >
+              {isSignUp && (
+                <motion.div className="space-y-2" variants={itemVariants}>
+                  <Label htmlFor="username">Username</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
+                    <Input
+                      id="username"
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      placeholder="johndoe"
+                      required
+                      className="pl-10"
+                      disabled={isLoading}
+                    />
+                  </div>
+                </motion.div>
+              )}
+              
+              <motion.div className="space-y-2" variants={itemVariants}>
+                <Label htmlFor="email">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="name@example.com"
+                    required
+                    className="pl-10"
+                    disabled={isLoading}
+                  />
+                </div>
+              </motion.div>
+              
+              <motion.div className="space-y-2" variants={itemVariants}>
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    className="pl-10"
+                    disabled={isLoading}
+                  />
+                </div>
+              </motion.div>
+              
+              <motion.div variants={itemVariants}>
+                <Button 
+                  type="submit" 
+                  className="w-full"
+                  disabled={isLoading}
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      {isSignUp ? 'Creating account...' : 'Signing in...'}
+                    </>
+                  ) : (
+                    <>
+                      {isSignUp ? (
+                        <>
+                          <UserPlus className="mr-2 h-4 w-4" />
+                          Sign Up
+                        </>
+                      ) : (
+                        <>
+                          <LogIn className="mr-2 h-4 w-4" />
+                          Sign In
+                        </>
+                      )}
+                    </>
+                  )}
+                </Button>
+              </motion.div>
+            </motion.form>
+          )}
           
-          <div className="mt-6 text-center">
+          <motion.div 
+            className="mt-6 flex flex-col sm:flex-row items-center justify-between space-y-3 sm:space-y-0"
+            variants={itemVariants}
+          >
             <button
               type="button"
-              onClick={() => setIsSignUp(!isSignUp)}
+              onClick={toggleAuthMethod}
               className="text-blue-600 hover:text-blue-800 text-sm font-medium"
               disabled={isLoading}
             >
-              {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
+              {isPhoneSignIn ? 'Sign in with Email' : 'Sign in with Phone'}
             </button>
-          </div>
-        </div>
-      </div>
+
+            {!isPhoneSignIn && (
+              <button
+                type="button"
+                onClick={() => setIsSignUp(!isSignUp)}
+                className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                disabled={isLoading}
+              >
+                {isSignUp ? 'Already have an account? Sign In' : "Don't have an account? Sign Up"}
+              </button>
+            )}
+          </motion.div>
+        </motion.div>
+      </motion.div>
     </div>
   );
 };
