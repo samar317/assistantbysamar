@@ -15,7 +15,7 @@ export const Watermark: React.FC<WatermarkProps> = ({ className, dark = false })
       opacity: 0.7, 
       y: 0,
       transition: {
-        duration: a0.5,
+        duration: 0.5,
         ease: "easeOut"
       }
     },
