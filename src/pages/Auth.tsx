@@ -1,12 +1,11 @@
-
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { BackgroundDecoration } from '@/components/DecorativeElements';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, Mail, Phone, User, Lock, LogIn, UserPlus, RotateCcw, Check, ChevronDown } from 'lucide-react';
+import { Loader2, Mail, Phone, User, Lock, LogIn, UserPlus, RotateCcw, Check, ChevronDown, ArrowLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -29,7 +28,6 @@ const Auth = () => {
   const [error, setError] = useState<string | null>(null);
   const isMobile = useIsMobile();
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { 
@@ -51,7 +49,6 @@ const Auth = () => {
     }
   };
 
-  // Country selection dropdown animation
   const dropdownVariants = {
     hidden: { opacity: 0, height: 0, overflow: 'hidden' },
     visible: { 
@@ -68,7 +65,6 @@ const Auth = () => {
     }
   }, [phone]);
 
-  // Redirect if already logged in
   if (user) {
     return <Navigate to="/" replace />;
   }
@@ -136,6 +132,14 @@ const Auth = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 p-4 overflow-hidden">
       <BackgroundDecoration />
       <Watermark />
+      
+      <Link 
+        to="/" 
+        className="fixed top-6 left-6 flex items-center gap-1 text-slate-600 hover:text-slate-900 transition-colors z-50"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        <span className="text-sm font-medium">Back to Home</span>
+      </Link>
       
       <motion.div 
         className="w-full max-w-md"

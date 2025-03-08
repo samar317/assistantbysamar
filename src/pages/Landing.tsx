@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { BackgroundDecoration } from '@/components/DecorativeElements';
@@ -7,6 +6,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { ArrowRight, Bot, MessageSquare, Sparkles, Menu, X } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { AccountMenu } from '@/components/AccountMenu';
+import { Watermark } from '@/components/Watermark';
 
 const features = [
   {
@@ -75,6 +76,7 @@ const Landing = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 overflow-x-hidden">
       <BackgroundDecoration />
+      <Watermark />
 
       <header className="fixed top-0 left-0 right-0 z-20 bg-white/80 backdrop-blur-md border-b border-slate-200/70">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -97,7 +99,8 @@ const Landing = () => {
           </div>
 
           {isMobile ? (
-            <div className="flex items-center">
+            <div className="flex items-center gap-4">
+              <AccountMenu />
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="p-2 text-slate-600 hover:text-slate-900 focus:outline-none"
@@ -113,17 +116,18 @@ const Landing = () => {
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               {user ? (
-                <Link to="/chat">
-                  <Button>
-                    Go to Chat
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </Link>
+                <div className="flex items-center gap-4">
+                  <Link to="/chat">
+                    <Button>
+                      Go to Chat
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                  <AccountMenu />
+                </div>
               ) : (
                 <>
-                  <Link to="/auth" className="text-slate-600 hover:text-slate-900 font-medium">
-                    Sign In
-                  </Link>
+                  <AccountMenu />
                   <Link to="/auth">
                     <Button>
                       Get Started
