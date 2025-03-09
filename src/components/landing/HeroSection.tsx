@@ -6,6 +6,34 @@ import { ArrowRight, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 
+const bounceAnimation = {
+  initial: { y: 0 },
+  animate: { 
+    y: [0, -10, 0],
+    transition: {
+      duration: 2,
+      repeat: Infinity,
+      repeatType: "loop",
+      ease: "easeInOut",
+      times: [0, 0.5, 1]
+    }
+  }
+};
+
+const floatAnimation = {
+  initial: { y: 0 },
+  animate: { 
+    y: [0, -15, 0],
+    transition: {
+      duration: 6,
+      repeat: Infinity,
+      repeatType: "loop",
+      ease: "easeInOut",
+      times: [0, 0.5, 1]
+    }
+  }
+};
+
 const HeroSection = () => {
   const { user } = useAuth();
   
@@ -20,16 +48,9 @@ const HeroSection = () => {
         >
           <motion.div
             className="absolute -top-10 -right-10 text-blue-500 dark:text-blue-400"
-            animate={{ 
-              rotate: [0, 10, 0, 10, 0],
-              scale: [1, 1.1, 1, 1.1, 1]
-            }}
-            transition={{ 
-              duration: 5, 
-              ease: "easeInOut", 
-              repeat: Infinity,
-              repeatDelay: 0
-            }}
+            variants={bounceAnimation}
+            initial="initial"
+            animate="animate"
           >
             <Sparkles size={32} />
           </motion.div>
@@ -59,7 +80,7 @@ const HeroSection = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.7, delay: 0.6 }}
         >
-          Get instant answers, creative ideas, helpful suggestions, and now generate amazing images with our advanced AI assistant.
+          Get instant answers, creative ideas, helpful suggestions, and now generate amazing AI images with our advanced AI assistant.
         </motion.p>
         
         <motion.div 
@@ -70,16 +91,40 @@ const HeroSection = () => {
         >
           {user ? (
             <Link to="/chat">
-              <Button size="lg" className="px-8 w-full sm:w-auto group">
+              <Button size="lg" className="px-8 w-full sm:w-auto group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-blue-500 dark:to-indigo-500">
                 Go to Chat
-                <ArrowRight className="ml-2 h-5 w-5 transform transition-transform group-hover:translate-x-1" />
+                <motion.div
+                  initial={{ x: 0 }}
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ 
+                    duration: 1.5, 
+                    repeat: Infinity, 
+                    repeatType: "loop",
+                    ease: "easeInOut",
+                    repeatDelay: 1
+                  }}
+                >
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </motion.div>
               </Button>
             </Link>
           ) : (
             <Link to="/auth">
-              <Button size="lg" className="px-8 w-full sm:w-auto group">
+              <Button size="lg" className="px-8 w-full sm:w-auto group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-blue-500 dark:to-indigo-500">
                 Get Started Free
-                <ArrowRight className="ml-2 h-5 w-5 transform transition-transform group-hover:translate-x-1" />
+                <motion.div
+                  initial={{ x: 0 }}
+                  animate={{ x: [0, 5, 0] }}
+                  transition={{ 
+                    duration: 1.5, 
+                    repeat: Infinity, 
+                    repeatType: "loop",
+                    ease: "easeInOut",
+                    repeatDelay: 1
+                  }}
+                >
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </motion.div>
               </Button>
             </Link>
           )}
@@ -91,6 +136,7 @@ const HeroSection = () => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.7, delay: 1 }}
           whileHover={{ y: -5, boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
+          variants={floatAnimation}
         >
           <img 
             src="https://images.unsplash.com/photo-1596638787647-904d822d751e?q=80&w=2069&auto=format&fit=crop"
