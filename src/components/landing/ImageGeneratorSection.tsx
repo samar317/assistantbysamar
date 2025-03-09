@@ -2,11 +2,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import ImageGenerator from '@/components/ImageGenerator';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, Image } from 'lucide-react';
 
 const ImageGeneratorSection = () => {
   return (
-    <section className="container mx-auto px-4 py-16 md:py-24">
+    <section id="image-generator" className="container mx-auto px-4 py-16 md:py-24">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -31,7 +31,7 @@ const ImageGeneratorSection = () => {
               repeatDelay: 1
             }}
           >
-            <Sparkles className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+            <Image className="h-6 w-6 text-blue-600 dark:text-blue-400" />
           </motion.div>
         </motion.div>
         
@@ -55,6 +55,18 @@ const ImageGeneratorSection = () => {
           Create stunning, unique images with our AI-powered image generator. 
           Simply describe what you want to see and watch the magic happen!
         </motion.p>
+        
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.4 }}
+          className="flex flex-wrap justify-center gap-2 mt-4 text-sm text-slate-500 dark:text-slate-400"
+        >
+          <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full">DALL-E 3 Support</span>
+          <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full">Multiple Sizes</span>
+          <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full">HD Quality</span>
+        </motion.div>
       </motion.div>
       
       <motion.div

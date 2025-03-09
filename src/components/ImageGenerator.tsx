@@ -2,17 +2,42 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, ImageIcon, Download, RefreshCw, Sparkles } from 'lucide-react';
+import { Loader2, ImageIcon, Download, RefreshCw, Sparkles, Settings2 } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/integrations/supabase/client';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 export const ImageGenerator = () => {
   const [prompt, setPrompt] = useState('');
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [imageMetadata, setImageMetadata] = useState<{
+    promptUsed?: string;
+    model?: string;
+    size?: string;
+    quality?: string;
+    timestamp?: string;
+  } | null>(null);
+  
+  // Advanced settings
+  const [size, setSize] = useState<string>("1024x1024");
+  const [model, setModel] = useState<string>("dall-e-3");
+  const [quality, setQuality] = useState<string>("standard");
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -30,7 +55,12 @@ export const ImageGenerator = () => {
     try {
       // Call our Supabase Edge Function to generate the image
       const { data, error } = await supabase.functions.invoke('generate-image', {
-        body: { prompt: prompt.trim() }
+        body: { 
+          prompt: prompt.trim(),
+          size,
+          model,
+          quality
+        }
       });
 
       if (error) {
@@ -44,6 +74,15 @@ export const ImageGenerator = () => {
 
       if (data && data.imageUrl) {
         setGeneratedImage(data.imageUrl);
+        // Store metadata
+        setImageMetadata({
+          promptUsed: data.promptUsed || prompt,
+          model: data.model || model,
+          size: data.size || size,
+          quality: data.quality || quality,
+          timestamp: data.timestamp || new Date().toISOString()
+        });
+        
         toast({
           title: "Image generated",
           description: "Your AI image has been successfully generated.",
@@ -92,23 +131,92 @@ export const ImageGenerator = () => {
             className="flex-1"
             disabled={isGenerating}
           />
-          <Button 
-            onClick={handleGenerate} 
-            disabled={isGenerating || !prompt.trim()}
-            className="w-full sm:w-auto group"
-          >
-            {isGenerating ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generating...
-              </>
-            ) : (
-              <>
-                <Sparkles className="mr-2 h-4 w-4 group-hover:animate-pulse" />
-                Generate
-              </>
-            )}
-          </Button>
+          <div className="flex gap-2">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button 
+                  variant="outline" 
+                  size="icon" 
+                  disabled={isGenerating}
+                  className="shrink-0"
+                >
+                  <Settings2 className="h-4 w-4" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-80">
+                <div className="space-y-4">
+                  <h4 className="font-medium">Advanced Settings</h4>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="model">Model</Label>
+                    <Select 
+                      value={model} 
+                      onValueChange={setModel}
+                    >
+                      <SelectTrigger id="model">
+                        <SelectValue placeholder="Select model" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="dall-e-3">DALL-E 3</SelectItem>
+                        <SelectItem value="dall-e-2">DALL-E 2</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="size">Size</Label>
+                    <Select 
+                      value={size} 
+                      onValueChange={setSize}
+                    >
+                      <SelectTrigger id="size">
+                        <SelectValue placeholder="Select size" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="1024x1024">1024x1024 (Square)</SelectItem>
+                        <SelectItem value="1792x1024">1792x1024 (Landscape)</SelectItem>
+                        <SelectItem value="1024x1792">1024x1792 (Portrait)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="quality">Quality</Label>
+                    <Select 
+                      value={quality} 
+                      onValueChange={setQuality}
+                    >
+                      <SelectTrigger id="quality">
+                        <SelectValue placeholder="Select quality" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="standard">Standard</SelectItem>
+                        <SelectItem value="hd">HD</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+            
+            <Button 
+              onClick={handleGenerate} 
+              disabled={isGenerating || !prompt.trim()}
+              className="group"
+            >
+              {isGenerating ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="mr-2 h-4 w-4 group-hover:animate-pulse" />
+                  Generate
+                </>
+              )}
+            </Button>
+          </div>
         </div>
 
         {error && (
@@ -140,6 +248,14 @@ export const ImageGenerator = () => {
                   alt="AI Generated" 
                   className="w-full rounded-lg object-cover"
                 />
+                
+                {imageMetadata && (
+                  <div className="absolute top-4 left-4 bg-black/50 backdrop-blur-sm text-white text-xs p-2 rounded">
+                    <p>Model: {imageMetadata.model}</p>
+                    <p>Size: {imageMetadata.size}</p>
+                  </div>
+                )}
+                
                 <div className="absolute bottom-4 right-4 flex space-x-2">
                   <Button 
                     variant="outline" 

@@ -20,13 +20,14 @@ serve(async (req) => {
       throw new Error("OpenAI API key is not configured. Please set the OPENAI_API_KEY environment variable.");
     }
 
-    const { prompt } = await req.json();
+    const { prompt, size = "1024x1024", model = "dall-e-3", quality = "standard" } = await req.json();
     
     if (!prompt) {
       throw new Error("No prompt provided in the request");
     }
     
     console.log("Received request with prompt:", prompt);
+    console.log("Parameters:", { size, model, quality });
 
     // Call OpenAI's DALL-E API to generate an image
     const response = await fetch('https://api.openai.com/v1/images/generations', {
@@ -37,8 +38,10 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         prompt: prompt,
+        model: model,
         n: 1,
-        size: "1024x1024",
+        size: size,
+        quality: quality,
         response_format: "url"
       })
     });
@@ -66,9 +69,14 @@ serve(async (req) => {
     const data = await response.json();
     console.log("Received response from OpenAI API");
 
-    // Return the image URL
+    // Return the image URL and other metadata
     return new Response(JSON.stringify({ 
-      imageUrl: data.data[0].url 
+      imageUrl: data.data[0].url,
+      model: model,
+      size: size,
+      quality: quality,
+      promptUsed: prompt,
+      timestamp: new Date().toISOString()
     }), {
       headers: { 
         ...corsHeaders,
