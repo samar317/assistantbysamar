@@ -17,7 +17,16 @@ serve(async (req) => {
   }
 
   try {
+    // Check if API key is available
+    if (!GEMINI_API_KEY) {
+      throw new Error("Gemini API key is not configured. Please set the GEMINI_API_KEY environment variable.");
+    }
+
     const { prompt, history = [] } = await req.json();
+    
+    if (!prompt) {
+      throw new Error("No prompt provided in the request");
+    }
     
     console.log("Received request with prompt:", prompt);
     console.log("History items:", history.length);
@@ -79,43 +88,74 @@ serve(async (req) => {
 
     console.log("Sending request to Gemini API");
     
-    // Call Gemini API
-    const response = await fetch(apiUrl, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload)
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Gemini API error:", errorText);
-      throw new Error(`Gemini API error: ${response.status} ${errorText}`);
-    }
-
-    const data = await response.json();
-    console.log("Received response from Gemini API");
-
-    // Extract the generated text from Gemini response
-    let generatedText = "No response generated";
+    // Add a timeout for the API call
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
     
-    if (data.candidates && data.candidates.length > 0 && 
-        data.candidates[0].content && 
-        data.candidates[0].content.parts && 
-        data.candidates[0].content.parts.length > 0) {
-      generatedText = data.candidates[0].content.parts[0].text;
-    }
-
-    // Return the response
-    return new Response(JSON.stringify({ 
-      response: generatedText 
-    }), {
-      headers: { 
-        ...corsHeaders,
-        "Content-Type": "application/json" 
+    try {
+      // Call Gemini API with timeout
+      const response = await fetch(apiUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId); // Clear timeout if request completed
+  
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`Gemini API error: ${response.status}`, errorText);
+        
+        let errorMessage = "An error occurred while processing your request";
+        
+        try {
+          // Try to parse error message from Google's API response
+          const errorJson = JSON.parse(errorText);
+          if (errorJson.error && errorJson.error.message) {
+            errorMessage = errorJson.error.message;
+          }
+        } catch (e) {
+          // If parsing fails, use the raw error text
+          errorMessage = `Error ${response.status}: ${errorText.substring(0, 100)}`;
+        }
+        
+        throw new Error(errorMessage);
       }
-    });
+  
+      const data = await response.json();
+      console.log("Received response from Gemini API");
+  
+      // Extract the generated text from Gemini response
+      let generatedText = "No response generated";
+      
+      if (data.candidates && data.candidates.length > 0 && 
+          data.candidates[0].content && 
+          data.candidates[0].content.parts && 
+          data.candidates[0].content.parts.length > 0) {
+        generatedText = data.candidates[0].content.parts[0].text;
+      }
+  
+      // Return the response
+      return new Response(JSON.stringify({ 
+        response: generatedText 
+      }), {
+        headers: { 
+          ...corsHeaders,
+          "Content-Type": "application/json" 
+        }
+      });
+    } catch (fetchError) {
+      clearTimeout(timeoutId);
+      
+      if (fetchError.name === 'AbortError') {
+        throw new Error("Request to Gemini API timed out. Please try again later.");
+      }
+      
+      throw fetchError;
+    }
     
   } catch (error) {
     console.error("Error in gemini-chat function:", error);

@@ -44,6 +44,45 @@
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 224 71.4% 4.1%;
   }
+
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 210 20% 98%;
+
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 240 4.9% 83.9%;
+
+    --sidebar-background: 240 10% 3.9%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 217.2 91.2% 59.8%;
+    --sidebar-primary-foreground: 210 20% 98%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 240 4.9% 83.9%;
+  }
 }
 
 @layer base {
@@ -67,7 +106,7 @@
 
 @layer utilities {
   .glass {
-    @apply bg-white/80 backdrop-blur-lg border border-white/20 shadow-sm;
+    @apply bg-white/80 backdrop-blur-lg border border-white/20 shadow-sm dark:bg-slate-900/80 dark:border-slate-700/30 dark:shadow-lg;
   }
 
   .glass-dark {
@@ -75,7 +114,7 @@
   }
 
   .surface-glass {
-    @apply bg-white/60 backdrop-blur-md border border-slate-200/50 shadow-sm;
+    @apply bg-white/60 backdrop-blur-md border border-slate-200/50 shadow-sm dark:bg-slate-800/60 dark:border-slate-700/50;
   }
 
   .text-balance {
@@ -89,6 +128,23 @@
 
   .scrollbar-hidden::-webkit-scrollbar {
     display: none;
+  }
+  
+  .glow {
+    @apply relative;
+  }
+  
+  .glow::after {
+    content: "";
+    @apply absolute -inset-[1px] bg-gradient-to-r from-transparent via-violet-500/20 to-transparent rounded-[inherit] blur-sm opacity-0 transition-opacity duration-700 -z-10;
+  }
+  
+  .glow:hover::after {
+    @apply opacity-100;
+  }
+  
+  .dark .glow::after {
+    @apply from-transparent via-blue-400/30 to-transparent blur-md;
   }
 }
 

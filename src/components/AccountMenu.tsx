@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar } from '@/components/ui/avatar';
 import { ChevronDown, LogIn, LogOut, UserCircle, Settings, User, Mail } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTheme } from '@/contexts/ThemeContext';
 
 interface AccountMenuProps {
   variant?: 'light' | 'dark';
@@ -14,12 +15,16 @@ interface AccountMenuProps {
 }
 
 export const AccountMenu: React.FC<AccountMenuProps> = ({ 
-  variant = 'light', 
+  variant: propVariant,
   className 
 }) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const { theme } = useTheme();
+  
+  // If variant is explicitly passed, use it, otherwise derive from theme
+  const variant = propVariant || (theme === 'dark' ? 'dark' : 'light');
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
   const closeMenu = () => setMenuOpen(false);
@@ -47,7 +52,7 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
         <div className="relative">
           <motion.button
             className={cn(
-              "flex items-center gap-2 rounded-full px-3 py-1.5 transition-colors",
+              "flex items-center gap-2 rounded-full px-3 py-1.5 transition-colors glow",
               variant === 'dark' ? 'hover:bg-white/10' : 'hover:bg-slate-100',
               textColor
             )}
@@ -172,7 +177,7 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
           <Button 
             onClick={navigateToAuth}
             variant={variant === 'dark' ? 'secondary' : 'default'}
-            className="gap-2 font-medium"
+            className="gap-2 font-medium glow"
             size="sm"
           >
             <LogIn className="h-4 w-4" />

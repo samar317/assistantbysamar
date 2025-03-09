@@ -1,6 +1,7 @@
 
 import { Message } from '@/types';
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from '@/components/ui/use-toast';
 
 // Function to detect if a response contains code
 export const detectCodeInResponse = (text: string): boolean => {
@@ -35,21 +36,36 @@ export const generateResponse = async (prompt: string, history: Message[] = []):
 
     if (error) {
       console.error('Error calling Gemini API:', error);
+      toast({
+        title: "Connection Error",
+        description: "Failed to connect to the AI service. Please try again later.",
+        variant: "destructive",
+      });
       throw new Error(`Error calling Gemini API: ${error.message}`);
     }
 
     if (data && data.response) {
       return data.response;
     } else if (data && data.error) {
+      toast({
+        title: "API Error",
+        description: data.error,
+        variant: "destructive",
+      });
       throw new Error(`API Error: ${data.error}`);
     } else {
+      toast({
+        title: "Unexpected Response",
+        description: "Received an unexpected response format from the API.",
+        variant: "destructive",
+      });
       throw new Error('Unexpected response format from API');
     }
   } catch (error) {
     console.error('Error generating response:', error);
     
-    // Fallback to a friendly error message
-    return "I'm sorry, but I couldn't generate a response at the moment. There might be an issue with the connection to the API. Please try again later.";
+    // Return a more helpful error message that doesn't look like it's from the AI
+    return "I couldn't process your request at the moment. There seems to be a connection issue with the AI service. Please check your network connection and try again in a few moments.";
   }
 };
 

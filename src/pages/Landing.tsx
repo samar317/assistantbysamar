@@ -7,12 +7,15 @@ import HeroSection from '@/components/landing/HeroSection';
 import FeaturesSection from '@/components/landing/FeaturesSection';
 import CTASection from '@/components/landing/CTASection';
 import Footer from '@/components/landing/Footer';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const Landing = () => {
+  const { theme } = useTheme();
+  
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 overflow-x-hidden">
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gradient-to-br from-slate-900 to-slate-800' : 'bg-gradient-to-br from-blue-50 to-indigo-50'} overflow-x-hidden`}>
       <BackgroundDecoration />
-      <Watermark />
+      <Watermark dark={theme === 'dark'} />
       
       <Header />
       
