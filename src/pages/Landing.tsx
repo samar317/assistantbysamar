@@ -8,6 +8,7 @@ import FeaturesSection from '@/components/landing/FeaturesSection';
 import CTASection from '@/components/landing/CTASection';
 import Footer from '@/components/landing/Footer';
 import { useTheme } from '@/contexts/ThemeContext';
+import { motion } from 'framer-motion';
 
 const Landing = () => {
   const { theme } = useTheme();
@@ -19,11 +20,16 @@ const Landing = () => {
       
       <Header />
       
-      <main className="pt-24">
+      <motion.main 
+        className="pt-24 relative z-10"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+      >
         <HeroSection />
         <FeaturesSection />
         <CTASection />
-      </main>
+      </motion.main>
 
       <Footer />
     </div>
