@@ -5,6 +5,7 @@ import { Watermark } from '@/components/Watermark';
 import Header from '@/components/landing/Header';
 import HeroSection from '@/components/landing/HeroSection';
 import FeaturesSection from '@/components/landing/FeaturesSection';
+import ImageGeneratorSection from '@/components/landing/ImageGeneratorSection';
 import CTASection from '@/components/landing/CTASection';
 import Footer from '@/components/landing/Footer';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -28,6 +29,7 @@ const Landing = () => {
       >
         <HeroSection />
         <FeaturesSection />
+        <ImageGeneratorSection />
         <CTASection />
       </motion.main>
 
