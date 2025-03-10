@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import ImageGenerator from '@/components/ImageGenerator';
+import ImageGenerator from '@/components/image-generator/ImageGenerator';
 import { Sparkles, Image } from 'lucide-react';
 
 const ImageGeneratorSection = () => {
