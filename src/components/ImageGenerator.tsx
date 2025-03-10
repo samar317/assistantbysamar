@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2, ImageIcon, Download, RefreshCw, Sparkles, Settings2 } from 'lucide-react';
+import { Loader2, ImageIcon, Download, RefreshCw, Sparkles, Settings2, AlertTriangle } from 'lucide-react';
 import { toast } from '@/components/ui/use-toast';
 import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -20,6 +20,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export const ImageGenerator = () => {
   const [prompt, setPrompt] = useState('');
@@ -69,6 +77,10 @@ export const ImageGenerator = () => {
       }
 
       if (data && data.error) {
+        // Handle specific error cases
+        if (data.error.includes("Billing hard limit has been reached")) {
+          throw new Error('OpenAI API billing limit reached. Please try again later or contact the administrator.');
+        }
         throw new Error(data.error);
       }
 
@@ -119,6 +131,8 @@ export const ImageGenerator = () => {
       description: "Your image is being downloaded.",
     });
   };
+
+  const isBillingError = error?.includes('billing limit') || error?.includes('Billing hard limit');
 
   return (
     <div className="w-full max-w-4xl mx-auto p-6 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800">
@@ -223,15 +237,53 @@ export const ImageGenerator = () => {
           <motion.div 
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 p-3 rounded-md text-sm"
+            className={cn(
+              "p-4 rounded-md text-sm",
+              isBillingError 
+                ? "bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800" 
+                : "bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800"
+            )}
           >
-            {error}
+            {isBillingError ? (
+              <div className="flex items-start">
+                <AlertTriangle className="h-5 w-5 mr-2 flex-shrink-0 text-amber-500" />
+                <div>
+                  <p className="font-medium mb-1">API Billing Limit Reached</p>
+                  <p>{error}</p>
+                  <p className="mt-2 text-xs">The OpenAI API account has reached its billing limit. Please try again later or contact the administrator to increase the limit.</p>
+                </div>
+              </div>
+            ) : (
+              error
+            )}
           </motion.div>
+        )}
+
+        {isBillingError && !generatedImage && (
+          <Card className="mt-2">
+            <CardHeader>
+              <CardTitle>Unable to Generate Images</CardTitle>
+              <CardDescription>
+                The image generation service is currently unavailable due to billing limitations.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                The OpenAI API account has reached its billing limit. This is a temporary issue.
+                You can try again later when the billing cycle resets or the limit is increased.
+              </p>
+            </CardContent>
+            <CardFooter>
+              <Button variant="outline" size="sm" onClick={() => setError(null)}>
+                Dismiss
+              </Button>
+            </CardFooter>
+          </Card>
         )}
 
         <div className={cn(
           "mt-6 flex flex-col items-center justify-center rounded-lg overflow-hidden transition-all duration-300",
-          !generatedImage && "border-2 border-dashed border-slate-300 dark:border-slate-700 h-72"
+          !generatedImage && !isBillingError && "border-2 border-dashed border-slate-300 dark:border-slate-700 h-72"
         )}>
           <AnimatePresence mode="wait">
             {generatedImage ? (
@@ -276,7 +328,7 @@ export const ImageGenerator = () => {
                   </Button>
                 </div>
               </motion.div>
-            ) : (
+            ) : !isBillingError ? (
               <motion.div 
                 key="placeholder"
                 initial={{ opacity: 0 }}
@@ -309,7 +361,7 @@ export const ImageGenerator = () => {
                   Try prompts like "sunset over mountains" or "futuristic city"
                 </p>
               </motion.div>
-            )}
+            ) : null}
           </AnimatePresence>
         </div>
       </div>
