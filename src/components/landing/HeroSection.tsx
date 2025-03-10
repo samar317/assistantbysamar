@@ -13,7 +13,7 @@ const bounceAnimation = {
     transition: {
       duration: 2,
       repeat: Infinity,
-      repeatType: "loop",
+      repeatType: "loop" as const,
       ease: "easeInOut",
       times: [0, 0.5, 1]
     }
@@ -27,7 +27,7 @@ const floatAnimation = {
     transition: {
       duration: 6,
       repeat: Infinity,
-      repeatType: "loop",
+      repeatType: "loop" as const,
       ease: "easeInOut",
       times: [0, 0.5, 1]
     }
@@ -99,7 +99,7 @@ const HeroSection = () => {
                   transition={{ 
                     duration: 1.5, 
                     repeat: Infinity, 
-                    repeatType: "loop",
+                    repeatType: "loop" as const, 
                     ease: "easeInOut",
                     repeatDelay: 1
                   }}
@@ -118,7 +118,7 @@ const HeroSection = () => {
                   transition={{ 
                     duration: 1.5, 
                     repeat: Infinity, 
-                    repeatType: "loop",
+                    repeatType: "loop" as const,
                     ease: "easeInOut",
                     repeatDelay: 1
                   }}
