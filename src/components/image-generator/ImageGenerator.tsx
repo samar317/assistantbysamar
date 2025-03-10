@@ -19,7 +19,7 @@ export const ImageGenerator = () => {
   const [error, setError] = useState<string | null>(null);
   const [imageMetadata, setImageMetadata] = useState<ImageMetadata | null>(null);
   
-  // Advanced settings state
+  // Advanced settings state with updated default values
   const [settings, setSettings] = useState<GenerationSettings>({
     size: "1024x1024",
     model: "dall-e-3",
@@ -79,8 +79,8 @@ export const ImageGenerator = () => {
         });
         
         toast({
-          title: "Image generated",
-          description: "Your AI image has been successfully generated.",
+          title: "Image generated successfully!",  // Updated toast message
+          description: "Your AI image has been created and is ready to view.",  // Updated description
         });
       } else {
         throw new Error('Unexpected response format from API');
@@ -122,7 +122,7 @@ export const ImageGenerator = () => {
       <div className="flex flex-col space-y-4">
         <div className="flex flex-col sm:flex-row gap-3">
           <Input
-            placeholder="Describe the image you want to generate..."
+            placeholder="Describe your dream image here..."  // Updated placeholder text
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             className="flex-1"
@@ -143,12 +143,12 @@ export const ImageGenerator = () => {
               {isGenerating ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Generating...
+                  Creating...  <!-- Changed from "Generating..." -->
                 </>
               ) : (
                 <>
                   <Sparkles className="mr-2 h-4 w-4 group-hover:animate-pulse" />
-                  Generate
+                  Create Image  <!-- Changed from "Generate" -->
                 </>
               )}
             </Button>
