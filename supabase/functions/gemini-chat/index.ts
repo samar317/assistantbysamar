@@ -19,13 +19,43 @@ serve(async (req) => {
   try {
     // Check if API key is available
     if (!GEMINI_API_KEY) {
-      throw new Error("Gemini API key is not configured. Please set the GEMINI_API_KEY environment variable.");
+      console.error("Gemini API key is not configured");
+      return new Response(
+        JSON.stringify({
+          error: "Gemini API key is not configured. Please set the GEMINI_API_KEY environment variable."
+        }),
+        { 
+          status: 200, // Return 200 even for configuration errors
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
+      );
     }
 
-    const { prompt, history = [] } = await req.json();
+    const requestData = await req.json().catch(error => {
+      console.error("Error parsing request JSON:", error);
+      return null;
+    });
+    
+    if (!requestData) {
+      return new Response(
+        JSON.stringify({ error: "Invalid JSON in request body" }),
+        { 
+          status: 200, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
+      );
+    }
+    
+    const { prompt, history = [] } = requestData;
     
     if (!prompt) {
-      throw new Error("No prompt provided in the request");
+      return new Response(
+        JSON.stringify({ error: "No prompt provided in the request" }),
+        { 
+          status: 200, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
+      );
     }
     
     console.log("Received request with prompt:", prompt);
@@ -122,7 +152,14 @@ serve(async (req) => {
           errorMessage = `Error ${response.status}: ${errorText.substring(0, 100)}`;
         }
         
-        throw new Error(errorMessage);
+        // Return a 200 status code even for Gemini API errors
+        return new Response(
+          JSON.stringify({ error: errorMessage }),
+          { 
+            status: 200, 
+            headers: { ...corsHeaders, "Content-Type": "application/json" } 
+          }
+        );
       }
   
       const data = await response.json();
@@ -139,19 +176,24 @@ serve(async (req) => {
       }
   
       // Return the response
-      return new Response(JSON.stringify({ 
-        response: generatedText 
-      }), {
-        headers: { 
-          ...corsHeaders,
-          "Content-Type": "application/json" 
+      return new Response(
+        JSON.stringify({ response: generatedText }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, "Content-Type": "application/json" }
         }
-      });
+      );
     } catch (fetchError) {
       clearTimeout(timeoutId);
       
       if (fetchError.name === 'AbortError') {
-        throw new Error("Request to Gemini API timed out. Please try again later.");
+        return new Response(
+          JSON.stringify({ error: "Request to Gemini API timed out. Please try again later." }),
+          { 
+            status: 200, 
+            headers: { ...corsHeaders, "Content-Type": "application/json" } 
+          }
+        );
       }
       
       throw fetchError;
@@ -160,14 +202,15 @@ serve(async (req) => {
   } catch (error) {
     console.error("Error in gemini-chat function:", error);
     
-    return new Response(JSON.stringify({ 
-      error: error.message || "An error occurred while processing your request" 
-    }), {
-      status: 500,
-      headers: { 
-        ...corsHeaders,
-        "Content-Type": "application/json" 
+    // Return a 200 status code even for unexpected errors
+    return new Response(
+      JSON.stringify({ 
+        error: error.message || "An error occurred while processing your request" 
+      }), 
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
       }
-    });
+    );
   }
 });

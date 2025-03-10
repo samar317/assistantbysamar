@@ -17,13 +17,43 @@ serve(async (req) => {
 
   try {
     if (!OPENAI_API_KEY) {
-      throw new Error("OpenAI API key is not configured. Please set the OPENAI_API_KEY environment variable.");
+      console.error("OpenAI API key is not configured");
+      return new Response(
+        JSON.stringify({
+          error: "OpenAI API key is not configured. Please set the OPENAI_API_KEY environment variable."
+        }),
+        { 
+          status: 200, // Return 200 even for configuration errors
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
+      );
     }
 
-    const { prompt, size = "1024x1024", model = "dall-e-3", quality = "standard" } = await req.json();
+    const requestData = await req.json().catch(error => {
+      console.error("Error parsing request JSON:", error);
+      return null;
+    });
+    
+    if (!requestData) {
+      return new Response(
+        JSON.stringify({ error: "Invalid JSON in request body" }),
+        { 
+          status: 200, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
+      );
+    }
+    
+    const { prompt, size = "1024x1024", model = "dall-e-3", quality = "standard" } = requestData;
     
     if (!prompt) {
-      throw new Error("No prompt provided in the request");
+      return new Response(
+        JSON.stringify({ error: "No prompt provided in the request" }),
+        { 
+          status: 200, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
+      );
     }
     
     console.log("Received request with prompt:", prompt);
@@ -63,38 +93,47 @@ serve(async (req) => {
         errorMessage = `Error ${response.status}: ${errorText.substring(0, 100)}`;
       }
       
-      throw new Error(errorMessage);
+      // Return a 200 status code even for OpenAI API errors
+      return new Response(
+        JSON.stringify({ error: errorMessage }),
+        { 
+          status: 200, 
+          headers: { ...corsHeaders, "Content-Type": "application/json" } 
+        }
+      );
     }
 
     const data = await response.json();
     console.log("Received response from OpenAI API");
 
     // Return the image URL and other metadata
-    return new Response(JSON.stringify({ 
-      imageUrl: data.data[0].url,
-      model: model,
-      size: size,
-      quality: quality,
-      promptUsed: prompt,
-      timestamp: new Date().toISOString()
-    }), {
-      headers: { 
-        ...corsHeaders,
-        "Content-Type": "application/json" 
+    return new Response(
+      JSON.stringify({ 
+        imageUrl: data.data[0].url,
+        model: model,
+        size: size,
+        quality: quality,
+        promptUsed: prompt,
+        timestamp: new Date().toISOString()
+      }), 
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
       }
-    });
+    );
     
   } catch (error) {
     console.error("Error in generate-image function:", error);
     
-    return new Response(JSON.stringify({ 
-      error: error.message || "An error occurred while generating the image" 
-    }), {
-      status: 500,
-      headers: { 
-        ...corsHeaders,
-        "Content-Type": "application/json" 
+    // Return a 200 status code even for unexpected errors
+    return new Response(
+      JSON.stringify({ 
+        error: error.message || "An error occurred while generating the image" 
+      }), 
+      {
+        status: 200,
+        headers: { ...corsHeaders, "Content-Type": "application/json" }
       }
-    });
+    );
   }
 });
