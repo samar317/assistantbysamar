@@ -30,11 +30,20 @@ const GenerationPlaceholder: React.FC = () => {
         </motion.div>
       </div>
       <p className="text-slate-500 dark:text-slate-400">
-        AI-generated images will appear here
+        AI images will appear here
       </p>
-      <p className="text-slate-400 dark:text-slate-500 text-sm mt-2">
-        Try prompts like "sunset over mountains" or "futuristic city"
-      </p>
+      <motion.p 
+        className="text-slate-400 dark:text-slate-500 text-sm mt-2"
+        animate={{
+          opacity: [0.5, 1, 0.5],
+        }}
+        transition={{
+          duration: 2,
+          repeat: Infinity,
+        }}
+      >
+        Try prompts like "sunset over mountains" or "cyberpunk city"
+      </motion.p>
     </motion.div>
   );
 };

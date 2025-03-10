@@ -79,8 +79,8 @@ export const ImageGenerator = () => {
         });
         
         toast({
-          title: "Image generated successfully!",  // Updated toast message
-          description: "Your AI image has been created and is ready to view.",  // Updated description
+          title: "Image generated successfully!",
+          description: "Your AI image has been created and is ready to view.",
         });
       } else {
         throw new Error('Unexpected response format from API');
@@ -122,7 +122,7 @@ export const ImageGenerator = () => {
       <div className="flex flex-col space-y-4">
         <div className="flex flex-col sm:flex-row gap-3">
           <Input
-            placeholder="Describe your dream image here..."  // Updated placeholder text
+            placeholder="Describe your dream image here..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             className="flex-1"
@@ -143,12 +143,12 @@ export const ImageGenerator = () => {
               {isGenerating ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating...  <!-- Changed from "Generating..." -->
+                  Creating...
                 </>
               ) : (
                 <>
                   <Sparkles className="mr-2 h-4 w-4 group-hover:animate-pulse" />
-                  Create Image  <!-- Changed from "Generate" -->
+                  Create Image
                 </>
               )}
             </Button>

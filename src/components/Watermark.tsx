@@ -29,6 +29,13 @@ export const Watermark: React.FC<WatermarkProps> = ({ className, dark = false })
     }
   };
 
+  const nameVariants = {
+    hover: {
+      backgroundPosition: ["0% center", "100% center"],
+      transition: { duration: 1, ease: "easeInOut" }
+    }
+  };
+
   return (
     <motion.div 
       className={cn(
@@ -42,14 +49,17 @@ export const Watermark: React.FC<WatermarkProps> = ({ className, dark = false })
       <motion.p 
         className={cn(
           "text-sm font-medium tracking-wider opacity-70",
-          dark ? "text-slate-800" : "text-white",
+          dark ? "text-slate-400" : "text-white",
         )}
         variants={textVariants}
       >
         Crafted by{' '}
-        <span className="font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+        <motion.span 
+          className="font-bold bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent"
+          variants={nameVariants}
+        >
           Samar
-        </span>
+        </motion.span>
       </motion.p>
     </motion.div>
   );

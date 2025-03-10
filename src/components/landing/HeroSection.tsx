@@ -159,43 +159,69 @@ const HeroSection = () => {
           )}
         </motion.div>
         
+        {/* Added Samar's name with animation instead of the image */}
         <motion.div 
-          className="mt-16 sm:mt-20 w-full max-w-4xl mx-auto relative rounded-2xl overflow-hidden shadow-2xl"
+          className="mt-16 sm:mt-20 w-full max-w-4xl mx-auto relative text-center"
           initial={{ y: 40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.7, delay: 1 }}
-          whileHover={{ y: -5, boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
-          variants={floatAnimation}
         >
-          <div className="aspect-w-16 aspect-h-9 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden">
-            <img 
-              src="https://images.unsplash.com/photo-1596638787647-904d822d751e?q=80&w=2069&auto=format&fit=crop"
-              alt="AI Assistant Demo" 
-              className="w-full h-full object-cover"
-              loading="lazy"
-            />
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none rounded-2xl"></div>
-          
-          {/* Decorative elements */}
-          <motion.div 
-            className="absolute -top-4 -left-4 text-blue-500 hidden md:block"
-            animate={{ rotate: 360 }}
-            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          <motion.div
+            className="py-10 px-6 bg-gradient-to-br from-blue-600/10 to-violet-600/10 dark:from-blue-900/20 dark:to-violet-900/20 backdrop-blur-sm rounded-2xl border border-blue-200/30 dark:border-blue-700/30 shadow-xl"
+            whileHover={{ y: -5, boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
+            whileTap={{ scale: 0.98 }}
           >
-            <div className="h-16 w-16 rounded-full bg-blue-500/10 dark:bg-blue-500/20 backdrop-blur-lg flex items-center justify-center">
-              <Bot className="h-8 w-8" />
-            </div>
-          </motion.div>
-          
-          <motion.div 
-            className="absolute -bottom-3 -right-3 text-violet-500 hidden md:block"
-            animate={{ rotate: -360 }}
-            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-          >
-            <div className="h-12 w-12 rounded-full bg-violet-500/10 dark:bg-violet-500/20 backdrop-blur-lg flex items-center justify-center">
-              <Sparkles className="h-6 w-6" />
-            </div>
+            <motion.h2 
+              className="text-5xl md:text-7xl font-bold"
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 1.2, duration: 0.8, ease: "easeOut" }}
+            >
+              <motion.span 
+                className="bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600"
+                animate={{ 
+                  backgroundPosition: ["0% center", "100% center", "0% center"],
+                }}
+                transition={{ 
+                  duration: 8, 
+                  ease: "easeInOut", 
+                  repeat: Infinity,
+                  repeatType: "reverse"
+                }}
+              >
+                Samar
+              </motion.span>
+            </motion.h2>
+            
+            <motion.div 
+              className="mt-4 text-slate-600 dark:text-slate-300 text-xl"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.6, duration: 0.5 }}
+            >
+              Building the future with AI
+            </motion.div>
+            
+            {/* Decorative elements */}
+            <motion.div 
+              className="absolute -top-4 -left-4 text-blue-500 hidden md:block"
+              animate={{ rotate: 360 }}
+              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            >
+              <div className="h-16 w-16 rounded-full bg-blue-500/10 dark:bg-blue-500/20 backdrop-blur-lg flex items-center justify-center">
+                <Bot className="h-8 w-8" />
+              </div>
+            </motion.div>
+            
+            <motion.div 
+              className="absolute -bottom-3 -right-3 text-violet-500 hidden md:block"
+              animate={{ rotate: -360 }}
+              transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+            >
+              <div className="h-12 w-12 rounded-full bg-violet-500/10 dark:bg-violet-500/20 backdrop-blur-lg flex items-center justify-center">
+                <Sparkles className="h-6 w-6" />
+              </div>
+            </motion.div>
           </motion.div>
         </motion.div>
       </div>
