@@ -2,9 +2,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles } from 'lucide-react';
+import { ArrowRight, Sparkles, BarChart, Bot, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const bounceAnimation = {
   initial: { y: 0 },
@@ -34,8 +35,22 @@ const floatAnimation = {
   }
 };
 
+const FeatureTag = ({ icon: Icon, text }: { icon: React.ElementType, text: string }) => (
+  <motion.div 
+    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 rounded-full text-sm font-medium text-slate-700 dark:text-slate-300 shadow-sm"
+    initial={{ opacity: 0, y: 10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.4 }}
+    whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
+  >
+    <Icon size={14} />
+    <span>{text}</span>
+  </motion.div>
+);
+
 const HeroSection = () => {
   const { user } = useAuth();
+  const isMobile = useIsMobile();
   
   return (
     <section className="container mx-auto px-4 py-12 md:py-24">
@@ -44,10 +59,10 @@ const HeroSection = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
-          className="relative"
+          className="relative mb-4"
         >
           <motion.div
-            className="absolute -top-10 -right-10 text-blue-500 dark:text-blue-400"
+            className="absolute -top-10 -right-10 text-blue-500 dark:text-blue-400 hidden sm:block"
             variants={bounceAnimation}
             initial="initial"
             animate="animate"
@@ -55,13 +70,19 @@ const HeroSection = () => {
             <Sparkles size={32} />
           </motion.div>
           
+          <motion.div className="flex flex-wrap gap-2 justify-center mb-6">
+            <FeatureTag icon={Bot} text="AI Powered" />
+            <FeatureTag icon={BarChart} text="Data Analytics" />
+            <FeatureTag icon={Zap} text="Fast Response" />
+          </motion.div>
+          
           <motion.h1 
-            className="text-4xl sm:text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-violet-600 dark:from-blue-400 dark:to-violet-400"
+            className="text-4xl sm:text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-violet-600 dark:from-blue-400 dark:to-violet-400 leading-tight tracking-tight"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.7, delay: 0.2 }}
           >
-            Your Personal AI Assistant
+            Your Personal<br className="hidden xs:block sm:hidden" /> AI Assistant
           </motion.h1>
         </motion.div>
         
@@ -91,7 +112,7 @@ const HeroSection = () => {
         >
           {user ? (
             <Link to="/chat">
-              <Button size="lg" className="px-8 w-full sm:w-auto group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-blue-500 dark:to-indigo-500">
+              <Button size={isMobile ? "default" : "lg"} className="px-6 w-full sm:w-auto group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-blue-500 dark:to-indigo-500 transition-all duration-300 shadow-md hover:shadow-xl">
                 Go to Chat
                 <motion.div
                   initial={{ x: 0 }}
@@ -110,7 +131,7 @@ const HeroSection = () => {
             </Link>
           ) : (
             <Link to="/auth">
-              <Button size="lg" className="px-8 w-full sm:w-auto group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-blue-500 dark:to-indigo-500">
+              <Button size={isMobile ? "default" : "lg"} className="px-6 w-full sm:w-auto group bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 dark:from-blue-500 dark:to-indigo-500 transition-all duration-300 shadow-md hover:shadow-xl">
                 Get Started Free
                 <motion.div
                   initial={{ x: 0 }}
@@ -128,22 +149,54 @@ const HeroSection = () => {
               </Button>
             </Link>
           )}
+          
+          {!isMobile && (
+            <Link to={user ? "/chat" : "/auth"}>
+              <Button variant="outline" size="lg" className="border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-300">
+                Learn More
+              </Button>
+            </Link>
+          )}
         </motion.div>
         
         <motion.div 
-          className="mt-16 sm:mt-20 w-full max-w-4xl mx-auto bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl rounded-2xl overflow-hidden"
+          className="mt-16 sm:mt-20 w-full max-w-4xl mx-auto relative rounded-2xl overflow-hidden shadow-2xl"
           initial={{ y: 40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.7, delay: 1 }}
           whileHover={{ y: -5, boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.25)" }}
           variants={floatAnimation}
         >
-          <img 
-            src="https://images.unsplash.com/photo-1596638787647-904d822d751e?q=80&w=2069&auto=format&fit=crop"
-            alt="AI Assistant Demo" 
-            className="w-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none rounded-2xl"></div>
+          <div className="aspect-w-16 aspect-h-9 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl overflow-hidden">
+            <img 
+              src="https://images.unsplash.com/photo-1596638787647-904d822d751e?q=80&w=2069&auto=format&fit=crop"
+              alt="AI Assistant Demo" 
+              className="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent pointer-events-none rounded-2xl"></div>
+          
+          {/* Decorative elements */}
+          <motion.div 
+            className="absolute -top-4 -left-4 text-blue-500 hidden md:block"
+            animate={{ rotate: 360 }}
+            transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+          >
+            <div className="h-16 w-16 rounded-full bg-blue-500/10 dark:bg-blue-500/20 backdrop-blur-lg flex items-center justify-center">
+              <Bot className="h-8 w-8" />
+            </div>
+          </motion.div>
+          
+          <motion.div 
+            className="absolute -bottom-3 -right-3 text-violet-500 hidden md:block"
+            animate={{ rotate: -360 }}
+            transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+          >
+            <div className="h-12 w-12 rounded-full bg-violet-500/10 dark:bg-violet-500/20 backdrop-blur-lg flex items-center justify-center">
+              <Sparkles className="h-6 w-6" />
+            </div>
+          </motion.div>
         </motion.div>
       </div>
     </section>
