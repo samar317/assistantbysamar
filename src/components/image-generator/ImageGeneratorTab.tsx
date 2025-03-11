@@ -7,7 +7,7 @@ import { Sparkles, MessageSquare, Image } from 'lucide-react';
 
 const ImageGeneratorTab: React.FC = () => {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="w-full py-4">
       <Tabs defaultValue="generator" className="w-full">
         <div className="flex justify-center mb-6">
           <TabsList className="grid grid-cols-2 w-full max-w-md">
@@ -76,6 +76,7 @@ const ImageGeneratorTab: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
+            className="w-full"
           >
             <ImageGenerator />
           </motion.div>
@@ -86,4 +87,3 @@ const ImageGeneratorTab: React.FC = () => {
 };
 
 export default ImageGeneratorTab;
-

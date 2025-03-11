@@ -110,14 +110,14 @@ export const ImageGenerator = () => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-6 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800">
-      <div className="flex flex-col space-y-4">
+    <div className="w-full max-w-5xl mx-auto p-6 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800">
+      <div className="flex flex-col space-y-6">
         <div className="flex flex-col sm:flex-row gap-3">
           <Input
             placeholder="Describe your dream image (e.g., 'sunset over mountains in cyberpunk style')..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            className="flex-1"
+            className="flex-1 text-lg py-6"
             disabled={isGenerating}
           />
           <div className="flex gap-2">
@@ -131,15 +131,16 @@ export const ImageGenerator = () => {
               onClick={handleGenerate} 
               disabled={isGenerating || !prompt.trim()}
               className="group bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white"
+              size="lg"
             >
               {isGenerating ? (
                 <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   Creating Image...
                 </>
               ) : (
                 <>
-                  <Sparkles className="mr-2 h-4 w-4 group-hover:animate-pulse" />
+                  <Sparkles className="mr-2 h-5 w-5 group-hover:animate-pulse" />
                   Generate Image
                 </>
               )}
@@ -152,15 +153,17 @@ export const ImageGenerator = () => {
           onDismiss={() => setError(null)} 
         />
 
-        <AnimatePresence mode="wait">
-          <ImageDisplay 
-            generatedImage={generatedImage}
-            imageMetadata={imageMetadata}
-            onRegenerate={handleGenerate}
-            onDownload={handleDownload}
-            isBillingError={false}
-          />
-        </AnimatePresence>
+        <div className="min-h-[500px] flex items-center justify-center">
+          <AnimatePresence mode="wait">
+            <ImageDisplay 
+              generatedImage={generatedImage}
+              imageMetadata={imageMetadata}
+              onRegenerate={handleGenerate}
+              onDownload={handleDownload}
+              isBillingError={false}
+            />
+          </AnimatePresence>
+        </div>
       </div>
     </div>
   );
