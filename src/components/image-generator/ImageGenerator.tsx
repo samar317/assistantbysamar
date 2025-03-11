@@ -19,11 +19,11 @@ export const ImageGenerator = () => {
   const [error, setError] = useState<string | null>(null);
   const [imageMetadata, setImageMetadata] = useState<ImageMetadata | null>(null);
   
-  // Advanced settings state with updated default values
+  // Advanced settings state
   const [settings, setSettings] = useState<GenerationSettings>({
     size: "1024x1024",
-    model: "dall-e-3",
-    quality: "standard"
+    model: "FLUX.1-schnell", // Updated model name
+    quality: "high"
   });
 
   const handleSettingChange = (setting: keyof GenerationSettings, value: string) => {
@@ -49,8 +49,6 @@ export const ImageGenerator = () => {
         body: { 
           prompt: prompt.trim(),
           size: settings.size,
-          model: settings.model,
-          quality: settings.quality
         }
       });
 
@@ -60,10 +58,6 @@ export const ImageGenerator = () => {
       }
 
       if (data && data.error) {
-        // Handle specific error cases
-        if (data.error.includes("Billing hard limit has been reached")) {
-          throw new Error('OpenAI API billing limit reached. Please try again later or contact the administrator.');
-        }
         throw new Error(data.error);
       }
 
@@ -115,8 +109,6 @@ export const ImageGenerator = () => {
     });
   };
 
-  const isBillingError = error?.includes('billing limit') || error?.includes('Billing hard limit');
-
   return (
     <div className="w-full max-w-4xl mx-auto p-6 bg-white dark:bg-slate-900 rounded-xl shadow-lg border border-slate-200 dark:border-slate-800">
       <div className="flex flex-col space-y-4">
@@ -166,7 +158,7 @@ export const ImageGenerator = () => {
             imageMetadata={imageMetadata}
             onRegenerate={handleGenerate}
             onDownload={handleDownload}
-            isBillingError={!!isBillingError}
+            isBillingError={false}
           />
         </AnimatePresence>
       </div>

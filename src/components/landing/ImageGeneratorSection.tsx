@@ -42,7 +42,7 @@ const ImageGeneratorSection = () => {
           viewport={{ once: true }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          AI Image Generator
+          Samar's AI Image Generator
         </motion.h2>
         
         <motion.p 
@@ -63,9 +63,10 @@ const ImageGeneratorSection = () => {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="flex flex-wrap justify-center gap-2 mt-4 text-sm text-slate-500 dark:text-slate-400"
         >
-          <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full">DALL-E 3 Support</span>
+          <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full">FLUX.1-schnell Model</span>
           <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full">Multiple Sizes</span>
           <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full">HD Quality</span>
+          <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full">Lightning Fast</span>
         </motion.div>
       </motion.div>
       

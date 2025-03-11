@@ -52,7 +52,7 @@ const GenerationPlaceholder: React.FC = () => {
         </motion.div>
       </div>
       <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200 mb-2">
-        AI Image Generator
+        Samar's AI Image Generator
       </h3>
       <p className="text-slate-600 dark:text-slate-300 mb-4 max-w-md">
         Create stunning, unique images with our AI-powered generator
@@ -72,6 +72,7 @@ const GenerationPlaceholder: React.FC = () => {
           <li>• "A sunset over mountains in watercolor style"</li>
           <li>• "Cyberpunk city with neon lights and flying cars"</li>
           <li>• "Portrait of a fantasy character with magical elements"</li>
+          <li>• "Futuristic landscape with floating islands and waterfalls"</li>
         </ul>
       </motion.div>
     </motion.div>
