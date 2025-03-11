@@ -59,7 +59,7 @@ serve(async (req) => {
     console.log("Received request with prompt:", prompt);
     console.log("Parameters:", { size });
 
-    // Call Hugging Face API to generate an image
+    // Call Hugging Face API to generate an image - removed negative_prompt parameter
     const response = await fetch("https://api-inference.huggingface.co/models/black-forest-labs/FLUX.1-schnell", {
       method: "POST",
       headers: {
@@ -67,10 +67,7 @@ serve(async (req) => {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        inputs: prompt,
-        parameters: {
-          negative_prompt: "ugly, disfigured, low quality, blurry, nsfw",
-        }
+        inputs: prompt
       })
     });
 
@@ -136,3 +133,4 @@ serve(async (req) => {
     );
   }
 });
+

@@ -100,3 +100,4 @@ const ImageGeneratorSection = () => {
 };
 
 export default ImageGeneratorSection;
+
