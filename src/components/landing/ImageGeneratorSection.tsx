@@ -1,8 +1,9 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import ImageGeneratorTab from '@/components/image-generator/ImageGeneratorTab';
-import { Sparkles, Image } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Sparkles, Image, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const ImageGeneratorSection = () => {
   return (
@@ -46,7 +47,7 @@ const ImageGeneratorSection = () => {
         </motion.h2>
         
         <motion.p 
-          className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto"
+          className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto mb-8"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
@@ -56,48 +57,18 @@ const ImageGeneratorSection = () => {
           Simply describe what you want to see and watch the magic happen!
         </motion.p>
         
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.4 }}
-          className="flex flex-wrap justify-center gap-2 mt-4 text-sm text-slate-500 dark:text-slate-400"
-        >
-          <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full">FLUX.1-schnell Model</span>
-          <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full">Multiple Sizes</span>
-          <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full">HD Quality</span>
-          <span className="px-3 py-1 bg-slate-100 dark:bg-slate-800 rounded-full">Lightning Fast</span>
-        </motion.div>
-      </motion.div>
-      
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: "-50px" }}
-        transition={{ duration: 0.7, delay: 0.2 }}
-        className="relative"
-      >
-        <motion.div
-          className="absolute -top-6 -left-6 md:-top-10 md:-left-10 text-pink-500 dark:text-pink-400 z-10 hidden md:block"
-          animate={{ 
-            rotate: [0, -10, 0, -10, 0],
-            scale: [1, 1.1, 1, 1.1, 1]
-          }}
-          transition={{ 
-            duration: 5, 
-            ease: "easeInOut", 
-            repeat: Infinity,
-            repeatDelay: 0.5
-          }}
-        >
-          <Sparkles size={32} />
-        </motion.div>
-        
-        <ImageGeneratorTab />
+        <Link to="/image-generator">
+          <Button 
+            size="lg"
+            className="bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white group"
+          >
+            Try Image Generator
+            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+          </Button>
+        </Link>
       </motion.div>
     </section>
   );
 };
 
 export default ImageGeneratorSection;
-
