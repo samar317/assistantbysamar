@@ -122,7 +122,7 @@ export const ImageGenerator = () => {
       <div className="flex flex-col space-y-4">
         <div className="flex flex-col sm:flex-row gap-3">
           <Input
-            placeholder="Describe your dream image here..."
+            placeholder="Describe your dream image (e.g., 'sunset over mountains in cyberpunk style')..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
             className="flex-1"
@@ -138,17 +138,17 @@ export const ImageGenerator = () => {
             <Button 
               onClick={handleGenerate} 
               disabled={isGenerating || !prompt.trim()}
-              className="group"
+              className="group bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white"
             >
               {isGenerating ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Creating...
+                  Creating Image...
                 </>
               ) : (
                 <>
                   <Sparkles className="mr-2 h-4 w-4 group-hover:animate-pulse" />
-                  Create Image
+                  Generate Image
                 </>
               )}
             </Button>

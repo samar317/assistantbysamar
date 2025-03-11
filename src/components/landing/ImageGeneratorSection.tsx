@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import ImageGenerator from '@/components/image-generator/ImageGenerator';
+import ImageGeneratorTab from '@/components/image-generator/ImageGeneratorTab';
 import { Sparkles, Image } from 'lucide-react';
 
 const ImageGeneratorSection = () => {
@@ -92,7 +92,7 @@ const ImageGeneratorSection = () => {
           <Sparkles size={32} />
         </motion.div>
         
-        <ImageGenerator />
+        <ImageGeneratorTab />
       </motion.div>
     </section>
   );
