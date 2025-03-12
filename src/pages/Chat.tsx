@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { AccountMenu } from '@/components/AccountMenu';
 import { Watermark } from '@/components/Watermark';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { motion } from 'framer-motion';
 
 const Chat = () => {
   const { user, loading } = useAuth();
@@ -25,7 +26,12 @@ const Chat = () => {
   }
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-slate-800">
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
+      className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-slate-800"
+    >
       <div className="fixed top-4 right-4 z-50 flex items-center gap-3">
         <ThemeToggle />
         <AccountMenu />
@@ -34,7 +40,7 @@ const Chat = () => {
       <div className="h-full flex flex-col">
         <ChatInterface />
       </div>
-    </div>
+    </motion.div>
   );
 };
 

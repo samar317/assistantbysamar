@@ -8,6 +8,7 @@ import { Avatar } from '@/components/ui/avatar';
 import { ChevronDown, LogIn, LogOut, UserCircle, Settings, User, Mail, ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/contexts/ThemeContext';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 interface AccountMenuProps {
   variant?: 'light' | 'dark';
@@ -21,7 +22,8 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
-  const { theme } = useTheme();
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const { theme, toggleTheme } = useTheme();
   
   // If variant is explicitly passed, use it, otherwise derive from theme
   const variant = propVariant || (theme === 'dark' ? 'dark' : 'light');
@@ -38,6 +40,11 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
   const navigateToAuth = () => {
     closeMenu();
     navigate('/auth');
+  };
+
+  const toggleSettings = () => {
+    setSettingsOpen(!settingsOpen);
+    if (menuOpen) setMenuOpen(false);
   };
 
   // Text and background colors based on variant
@@ -109,7 +116,9 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
                 </div>
                 
                 <div className="py-1">
-                  <button
+                  <motion.button
+                    whileHover={{ x: 5 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
                     onClick={() => {
                       closeMenu();
                       navigate('/chat');
@@ -122,9 +131,11 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
                   >
                     <User className="mr-3 h-4 w-4" />
                     <span>Your Chat</span>
-                  </button>
+                  </motion.button>
                   
-                  <button
+                  <motion.button
+                    whileHover={{ x: 5 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
                     onClick={() => {
                       closeMenu();
                       navigate('/image-generator');
@@ -137,9 +148,11 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
                   >
                     <ImageIcon className="mr-3 h-4 w-4" />
                     <span>Image Generator</span>
-                  </button>
+                  </motion.button>
                   
-                  <button
+                  <motion.button
+                    whileHover={{ x: 5 }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
                     onClick={() => {
                       closeMenu();
                       // Profile functionality would go here
@@ -152,35 +165,106 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
                   >
                     <UserCircle className="mr-3 h-4 w-4" />
                     <span>Profile</span>
-                  </button>
+                  </motion.button>
                   
-                  <button
-                    onClick={() => {
-                      closeMenu();
-                      // Settings functionality would go here
-                    }}
-                    className={cn(
-                      "flex w-full items-center px-4 py-2.5 text-sm",
-                      textColor,
-                      menuItemHoverBg
-                    )}
-                  >
-                    <Settings className="mr-3 h-4 w-4" />
-                    <span>Settings</span>
-                  </button>
+                  <Popover open={settingsOpen} onOpenChange={setSettingsOpen}>
+                    <PopoverTrigger asChild>
+                      <motion.button
+                        whileHover={{ x: 5 }}
+                        transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                        onClick={toggleSettings}
+                        className={cn(
+                          "flex w-full items-center px-4 py-2.5 text-sm",
+                          textColor,
+                          menuItemHoverBg,
+                          settingsOpen && (variant === 'dark' ? 'bg-slate-700' : 'bg-slate-100')
+                        )}
+                      >
+                        <Settings className={cn(
+                          "mr-3 h-4 w-4 transition-transform duration-300",
+                          settingsOpen && "rotate-90"
+                        )} />
+                        <span>Settings</span>
+                      </motion.button>
+                    </PopoverTrigger>
+                    <PopoverContent 
+                      className={cn(
+                        "w-56 p-0 -mt-px",
+                        menuBg
+                      )}
+                    >
+                      <div className="p-3">
+                        <h4 className={cn("font-medium mb-2", textColor)}>Theme</h4>
+                        <div className="flex items-center justify-between">
+                          <span className={cn("text-sm", variant === 'dark' ? 'text-slate-400' : 'text-slate-600')}>
+                            {theme === 'dark' ? 'Dark Mode' : 'Light Mode'}
+                          </span>
+                          <motion.button
+                            onClick={toggleTheme}
+                            whileTap={{ scale: 0.9 }}
+                            className={cn(
+                              "relative overflow-hidden rounded-full p-1",
+                              variant === 'dark' ? 'bg-slate-700' : 'bg-slate-200'
+                            )}
+                          >
+                            <div className="relative">
+                              <AnimatePresence mode="wait">
+                                {theme === 'light' ? (
+                                  <motion.div
+                                    key="sun-settings"
+                                    initial={{ rotate: -90, opacity: 0 }}
+                                    animate={{ rotate: 0, opacity: 1 }}
+                                    exit={{ rotate: 90, opacity: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                  >
+                                    <Sun className="h-4 w-4" />
+                                  </motion.div>
+                                ) : (
+                                  <motion.div
+                                    key="moon-settings"
+                                    initial={{ rotate: -90, opacity: 0 }}
+                                    animate={{ rotate: 0, opacity: 1 }}
+                                    exit={{ rotate: 90, opacity: 0 }}
+                                    transition={{ duration: 0.2 }}
+                                  >
+                                    <Moon className="h-4 w-4" />
+                                  </motion.div>
+                                )}
+                              </AnimatePresence>
+                            </div>
+                          </motion.button>
+                        </div>
+                      </div>
+                      <div className={cn("border-t", variant === 'dark' ? 'border-slate-700' : 'border-slate-200')}>
+                        <motion.button
+                          whileHover={{ backgroundColor: variant === 'dark' ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)' }}
+                          className="flex w-full items-center p-3 text-sm"
+                          onClick={() => {
+                            setSettingsOpen(false);
+                            // Language settings would go here
+                          }}
+                        >
+                          <span className={textColor}>Language</span>
+                          <span className={cn("ml-auto text-xs", variant === 'dark' ? 'text-slate-400' : 'text-slate-500')}>English</span>
+                        </motion.button>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 
                 <div className="border-t border-slate-200/70 dark:border-slate-700/70 py-1">
-                  <button
+                  <motion.button
+                    whileHover={{ x: 5, color: variant === 'dark' ? '#ff6b6b' : '#e53e3e' }}
+                    transition={{ type: "spring", stiffness: 400, damping: 10 }}
                     onClick={handleSignOut}
                     className={cn(
                       "flex w-full items-center px-4 py-2.5 text-sm",
-                      variant === 'dark' ? 'text-red-400 hover:bg-red-500/10' : 'text-red-600 hover:bg-red-50',
+                      variant === 'dark' ? 'text-red-400' : 'text-red-600',
                     )}
                   >
                     <LogOut className="mr-3 h-4 w-4" />
                     <span>Sign out</span>
-                  </button>
+                  </motion.button>
                 </div>
               </motion.div>
             )}
