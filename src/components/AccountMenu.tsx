@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Avatar } from '@/components/ui/avatar';
-import { ChevronDown, LogIn, LogOut, UserCircle, Settings, User, Mail, ImageIcon } from 'lucide-react';
+import { ChevronDown, LogIn, LogOut, UserCircle, Settings, User, Mail, ImageIcon, Sun, Moon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
