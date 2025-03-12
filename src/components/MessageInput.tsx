@@ -43,7 +43,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="relative w-full max-w-4xl mx-auto">
-      <div className="relative flex items-center bg-white rounded-2xl pr-2 shadow-sm border border-slate-200 hover:border-slate-300 transition-colors">
+      <div className="relative flex items-center bg-slate-800 rounded-2xl pr-2 shadow-sm border border-slate-700 hover:border-slate-600 transition-colors">
         <textarea
           ref={textareaRef}
           value={message}
@@ -53,8 +53,8 @@ const MessageInput: React.FC<MessageInputProps> = ({
           disabled={isProcessing}
           className={cn(
             "w-full py-3 px-4 pr-14 max-h-[200px] bg-transparent resize-none",
-            "focus:outline-none focus:ring-0 placeholder:text-slate-400",
-            "rounded-2xl text-slate-800",
+            "focus:outline-none focus:ring-0 placeholder:text-slate-500",
+            "rounded-2xl text-white",
             isProcessing && "opacity-70"
           )}
           rows={1}
@@ -64,7 +64,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
           disabled={!message.trim() || isProcessing}
           className={cn(
             "absolute right-2 bg-blue-600 h-10 w-10 rounded-xl flex items-center justify-center transition-all",
-            "text-white hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed",
+            "text-white hover:bg-blue-700 disabled:bg-blue-500/50 disabled:cursor-not-allowed",
           )}
         >
           {isProcessing ? (
@@ -76,7 +76,7 @@ const MessageInput: React.FC<MessageInputProps> = ({
       </div>
       <div className="flex justify-center mt-2">
         <div className="text-xs text-slate-500 flex items-center gap-1">
-          <Sparkles size={12} /> Powered by Google Gemini
+          <Sparkles size={12} /> Powered by OpenAI
         </div>
       </div>
     </form>

@@ -223,7 +223,7 @@ const ChatInterface: React.FC = () => {
           <div className="flex-1 flex justify-center">
             <div className="flex items-center gap-2 hover:bg-slate-700/50 px-3 py-1.5 rounded-full cursor-pointer">
               <h1 className="text-lg font-medium flex items-center gap-2">
-                Gemini
+                AI Assistant
               </h1>
               <ChevronDown size={16} className="text-slate-300" />
             </div>
@@ -310,7 +310,7 @@ const ChatInterface: React.FC = () => {
           </div>
           
           <div className="mt-2 text-xs text-center text-slate-500">
-            <span>2.0 Flash</span>
+            <span>Powered by OpenAI</span>
           </div>
         </div>
       </div>
