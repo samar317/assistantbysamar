@@ -4,7 +4,7 @@ import { Message } from '@/types';
 import { cn } from '@/lib/utils';
 import CodeBlock from './CodeBlock';
 import { extractCodeFromResponse } from '@/utils/apiService';
-import { Bot, User, Code } from 'lucide-react';
+import { BotMessageSquare, User, Code } from 'lucide-react';
 
 interface ChatMessageProps {
   message: Message;
@@ -106,7 +106,7 @@ const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLast = false }) =>
     >
       {!isUser && (
         <div className="h-10 w-10 rounded-xl flex items-center justify-center bg-blue-100 text-blue-600 flex-shrink-0 shadow-sm">
-          <Bot size={20} />
+          <BotMessageSquare size={20} />
         </div>
       )}
       

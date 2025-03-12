@@ -2,7 +2,7 @@
 import React from 'react';
 import { Conversation } from '@/types';
 import { cn } from '@/lib/utils';
-import { MessageSquare, Plus, Trash2, Bot, MessageSquareDashed } from 'lucide-react';
+import { MessageSquare, Plus, Trash2, BotMessageSquare, MessageSquareDashed } from 'lucide-react';
 
 interface SidebarProps {
   conversations: Conversation[];
@@ -43,7 +43,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="p-4 border-b border-slate-700/70">
         <div className="flex items-center gap-3 px-3 py-2.5 mb-4">
           <div className="h-10 w-10 rounded-full flex items-center justify-center bg-blue-500 text-white">
-            <Bot size={22} />
+            <BotMessageSquare size={22} />
           </div>
           <div className="flex-1">
             <h2 className="font-bold text-white">AI Assistant</h2>
