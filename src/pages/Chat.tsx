@@ -5,6 +5,7 @@ import ChatInterface from '@/components/ChatInterface';
 import { useAuth } from '@/contexts/AuthContext';
 import { AccountMenu } from '@/components/AccountMenu';
 import { Watermark } from '@/components/Watermark';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 const Chat = () => {
   const { user, loading } = useAuth();
@@ -12,8 +13,8 @@ const Chat = () => {
   // Show loading state while checking auth
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div className="animate-pulse text-lg text-blue-600 font-medium">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900">
+        <div className="animate-pulse text-lg text-blue-600 dark:text-blue-400 font-medium">Loading...</div>
       </div>
     );
   }
@@ -24,8 +25,9 @@ const Chat = () => {
   }
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
-      <div className="fixed top-4 right-4 z-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-slate-800">
+      <div className="fixed top-4 right-4 z-50 flex items-center gap-3">
+        <ThemeToggle />
         <AccountMenu />
       </div>
       <Watermark dark />

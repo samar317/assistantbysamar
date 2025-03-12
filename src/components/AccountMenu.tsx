@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Avatar } from '@/components/ui/avatar';
-import { ChevronDown, LogIn, LogOut, UserCircle, Settings, User, Mail } from 'lucide-react';
+import { ChevronDown, LogIn, LogOut, UserCircle, Settings, User, Mail, ImageIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useTheme } from '@/contexts/ThemeContext';
 
@@ -79,18 +79,18 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
             {menuOpen && (
               <motion.div
                 className={cn(
-                  "absolute right-0 top-full mt-2 w-56 rounded-lg shadow-lg",
+                  "absolute right-0 top-full mt-2 w-64 rounded-lg shadow-lg",
                   "border overflow-hidden z-50",
                   menuBg
                 )}
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+                initial={{ opacity: 0, y: -10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.95 }}
                 transition={{ duration: 0.2, ease: "easeOut" }}
               >
-                <div className="p-4 border-b border-dashed border-slate-200/70">
+                <div className="p-4 border-b border-slate-200/70 dark:border-slate-700/70">
                   <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10 border">
+                    <Avatar className="h-12 w-12 border">
                       <div className="flex h-full w-full items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-violet-600 text-white font-semibold">
                         {user.email ? user.email.charAt(0).toUpperCase() : 'U'}
                       </div>
@@ -115,7 +115,7 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
                       navigate('/chat');
                     }}
                     className={cn(
-                      "flex w-full items-center px-4 py-2 text-sm",
+                      "flex w-full items-center px-4 py-2.5 text-sm",
                       textColor,
                       menuItemHoverBg
                     )}
@@ -127,10 +127,25 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
                   <button
                     onClick={() => {
                       closeMenu();
-                      // You can add profile page navigation here
+                      navigate('/image-generator');
                     }}
                     className={cn(
-                      "flex w-full items-center px-4 py-2 text-sm",
+                      "flex w-full items-center px-4 py-2.5 text-sm",
+                      textColor,
+                      menuItemHoverBg
+                    )}
+                  >
+                    <ImageIcon className="mr-3 h-4 w-4" />
+                    <span>Image Generator</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => {
+                      closeMenu();
+                      // Profile functionality would go here
+                    }}
+                    className={cn(
+                      "flex w-full items-center px-4 py-2.5 text-sm",
                       textColor,
                       menuItemHoverBg
                     )}
@@ -142,10 +157,10 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
                   <button
                     onClick={() => {
                       closeMenu();
-                      // You can add settings page navigation here 
+                      // Settings functionality would go here
                     }}
                     className={cn(
-                      "flex w-full items-center px-4 py-2 text-sm",
+                      "flex w-full items-center px-4 py-2.5 text-sm",
                       textColor,
                       menuItemHoverBg
                     )}
@@ -155,11 +170,11 @@ export const AccountMenu: React.FC<AccountMenuProps> = ({
                   </button>
                 </div>
                 
-                <div className="border-t border-dashed border-slate-200/70 py-1">
+                <div className="border-t border-slate-200/70 dark:border-slate-700/70 py-1">
                   <button
                     onClick={handleSignOut}
                     className={cn(
-                      "flex w-full items-center px-4 py-2 text-sm",
+                      "flex w-full items-center px-4 py-2.5 text-sm",
                       variant === 'dark' ? 'text-red-400 hover:bg-red-500/10' : 'text-red-600 hover:bg-red-50',
                     )}
                   >
