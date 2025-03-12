@@ -14,8 +14,8 @@ const Chat = () => {
   // Show loading state while checking auth
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900">
-        <div className="animate-pulse text-lg text-blue-600 dark:text-blue-400 font-medium">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-slate-900">
+        <div className="animate-pulse text-lg text-blue-400 font-medium">Loading...</div>
       </div>
     );
   }
@@ -30,11 +30,10 @@ const Chat = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-slate-800"
+      className="min-h-screen bg-slate-900"
     >
       <div className="fixed top-4 right-4 z-50 flex items-center gap-3">
-        <ThemeToggle />
-        <AccountMenu />
+        <AccountMenu variant="dark" />
       </div>
       <Watermark dark />
       <div className="h-full flex flex-col">
